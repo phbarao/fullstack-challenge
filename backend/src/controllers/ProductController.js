@@ -2,7 +2,7 @@ import Product from '../models/Product.js';
 
 class ProductController {
   async index(req, res) {
-    const product = await Product.find().sort();
+    const product = await Product.find().sort({ title: 1 });
 
     res.json(product);
   }
