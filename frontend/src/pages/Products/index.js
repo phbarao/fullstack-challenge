@@ -5,24 +5,46 @@ import api from "../../services/api";
 
 function Products() {
   const [products, setProducts] = useState([]);
+  const [category, setCategory] = useState("all");
   const [search, setSearch] = useState("");
-  const [filteredProducts, setFilteredProducts] = useState([]);
+
+  const handleFilterChange = (e, filterType) => {
+    switch (filterType) {
+      case "category":
+        setCategory(e.target.value);
+        break;
+
+      case "search":
+        setSearch(e.target.value);
+        break;
+
+      default:
+        break;
+    }
+  };
 
   useEffect(() => {
     async function loadProducts() {
       const response = await api.get("/products");
       setProducts(response.data);
-    }
-    loadProducts();
-  }, []);
+      let filteredProducts = response.data;
 
-  useEffect(() => {
-    setFilteredProducts(
-      products.filter((product) =>
-        product.title.toLowerCase().includes(search.toLowerCase())
-      )
-    );
-  }, [search, products]);
+      if (category !== "all") {
+        filteredProducts = filteredProducts.filter(
+          (product) => product.category === category
+        );
+      }
+
+      if (search !== "") {
+        filteredProducts = filteredProducts.filter((product) =>
+          product.title.toLowerCase().includes(search.toLowerCase())
+        );
+      }
+      setProducts(filteredProducts);
+    }
+
+    loadProducts();
+  }, [search, category]);
 
   function formatPrice(price) {
     return price.toLocaleString("pt-BR", {
@@ -35,16 +57,26 @@ function Products() {
     <>
       <h1>Products</h1>
 
+      <select
+        name="category"
+        id="category"
+        onChange={(e) => handleFilterChange(e, "category")}
+      >
+        <option value="all">Todos...</option>
+        <option value="audio">Audio</option>
+        <option value="video">Video</option>
+      </select>
+
       <input
         id="search"
         name="search"
         type="text"
         placeholder="Search..."
-        onChange={(e) => setSearch(e.target.value)}
+        onChange={(e) => handleFilterChange(e, "search")}
       />
 
       <ul>
-        {filteredProducts.map((product) => (
+        {products.map((product) => (
           <li key={product._id}>
             <strong>{product.title}</strong>
             <small>{product.category}</small>
