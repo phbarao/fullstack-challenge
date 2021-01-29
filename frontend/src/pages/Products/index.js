@@ -8,25 +8,12 @@ function Products() {
   const [category, setCategory] = useState("all");
   const [search, setSearch] = useState("");
 
-  const handleFilterChange = (e, filterType) => {
-    switch (filterType) {
-      case "category":
-        setCategory(e.target.value);
-        break;
-
-      case "search":
-        setSearch(e.target.value);
-        break;
-
-      default:
-        break;
-    }
-  };
-
   useEffect(() => {
     async function loadProducts() {
       const response = await api.get("/products");
+
       setProducts(response.data);
+
       let filteredProducts = response.data;
 
       if (category !== "all") {
@@ -40,11 +27,27 @@ function Products() {
           product.title.toLowerCase().includes(search.toLowerCase())
         );
       }
+
       setProducts(filteredProducts);
     }
 
     loadProducts();
   }, [search, category]);
+
+  function handleFilterChange(e, filterType) {
+    switch (filterType) {
+      case "category":
+        setCategory(e.target.value);
+        break;
+
+      case "search":
+        setSearch(e.target.value);
+        break;
+
+      default:
+        break;
+    }
+  }
 
   function formatPrice(price) {
     return price.toLocaleString("pt-BR", {

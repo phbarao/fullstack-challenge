@@ -1,4 +1,4 @@
-import { createGlobalStyle } from 'styled-components';
+import { createGlobalStyle } from "styled-components";
 
 export default createGlobalStyle`
   * {
@@ -20,9 +20,12 @@ export default createGlobalStyle`
     color: #fff;
   }
 
-  body, input, button {
+  body, input, button, select {
     -webkit-font-smoothing: antialiased;
     font-family: 'Rubik', sans-serif;
+
+    outline: none;
+
   }
 
   a {
